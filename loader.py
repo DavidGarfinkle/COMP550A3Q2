@@ -1,3 +1,5 @@
+import six
+
 '''
 Created on Oct 26, 2015
 
@@ -25,7 +27,7 @@ def load_instances(f):
     Load two lists of cases to perform WSD on. The structure that is returned is a dict, where
     the keys are the ids, and the values are instances of WSDInstance.
     '''
-    tree = ET.parse(f)
+    tree = ET.parse(f, ET.XMLParser(encoding="utf-8"))
     root = tree.getroot()
     
     dev_instances = {}
@@ -38,11 +40,11 @@ def load_instances(f):
             instances = test_instances
         for sentence in text:
             # construct sentence context
-            context = [to_ascii(el.attrib['lemma']) for el in sentence]
+            context = [el.attrib['lemma'] for el in sentence]
             for i, el in enumerate(sentence):
                 if el.tag == 'instance':
                     my_id = el.attrib['id']
-                    lemma = to_ascii(el.attrib['lemma'])
+                    lemma = el.attrib['lemma']
                     instances[my_id] = WSDInstance(my_id, lemma, context, i)
     return dev_instances, test_instances
 
@@ -54,7 +56,7 @@ def load_key(f):
     '''
     dev_key = {}
     test_key = {}
-    for line in open(f):
+    for line in open(f, 'r'):
         if len(line) <= 1: continue
         #print (line)
         doc, my_id, sense_key = line.strip().split(' ', 2)
@@ -75,7 +77,7 @@ if __name__ == '__main__':
     dev_key, test_key = load_key(key_f)
     
     # IMPORTANT: keys contain fewer entries than the instances; need to remove them
-    dev_instances = {k:v for (k,v) in dev_instances.iteritems() if k in dev_key}
-    test_instances = {k:v for (k,v) in test_instances.iteritems() if k in test_key}
+    dev_instances = {k:v for (k,v) in six.iteritems(dev_instances) if k in dev_key}
+    test_instances = {k:v for (k,v) in six.iteritems(test_instances) if k in test_key}
     
     # read to use here
