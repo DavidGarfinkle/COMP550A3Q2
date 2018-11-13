@@ -29,10 +29,10 @@ def load_instances(f):
     '''
     tree = ET.parse(f, ET.XMLParser(encoding="utf-8"))
     root = tree.getroot()
-    
+
     dev_instances = {}
     test_instances = {}
-    
+
     for text in root:
         if text.attrib['id'].startswith('d001'):
             instances = dev_instances
@@ -52,7 +52,7 @@ def load_key(f):
     '''
     Load the solutions as dicts.
     Key is the id
-    Value is the list of correct sense keys. 
+    Value is the list of correct sense keys.
     '''
     dev_key = {}
     test_key = {}
